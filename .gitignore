@@ -1,0 +1,14 @@
+*.pyc
+*.swp
+*.log
+*~
+trans/*
+build/*
+dist/*
+trans_imp_temp/*
+test/*
+trans.egg-info/*
+trans_imp/provider/apitest.py
+\#*.py\#
+.\#*
+*.log
