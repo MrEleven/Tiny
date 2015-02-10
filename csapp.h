@@ -10,27 +10,37 @@
 #include <string.h>
 #include <arpa/inet.h>
 
-int open_clientfd(char *hostname, int port)
-{
-     int clientfd;
-     struct hostent *hp;
-     struct sockaddr_in serveraddr;
+#define MAXLINE 8192
+#define RIO_BUFSIZE 8192
+#define LISTENQ  1024  /* second argument to listen() */
 
-     if ((clientfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-     {
-	  return -1;
-     }
+typedef struct sockaddr SA;
 
-     if ((hp = gethostbyname(hostname)) == NULL)
-	  return -2;
+typedef struct {
+    int rio_fd;                /* descriptor for this internal buf */
+    int rio_cnt;               /* unread bytes in internal buf */
+    char *rio_bufptr;          /* next unread byte in internal buf */
+    char rio_buf[RIO_BUFSIZE]; /* internal buffer */
+} rio_t;
 
-     bzero((char *) &serveraddr, sizeof(serveraddr));
-     serveraddr.sin_family = AF_INET;
-     bcopy((char* )hp->h_addr_list[0],
-	   (char *)&serveraddr.sin_addr.s_addr, hp->h_length);
-     serveraddr.sin_port = htons(port);
 
-     if( connect(clientfd, (struct sockaddr *) &serveraddr, sizeof(serveraddr)) < 0)
-	  return -1;
-     return clientfd;
-}
+int open_clientfd(char *hostname, int port);
+int Open_clientfd(char *hostname, int port);
+
+int open_listenfd(int port);
+int Open_listenfd(int port);
+
+/* Rio (Robust I/O) package */
+ssize_t rio_readn(int fd, void *usrbuf, size_t n);
+ssize_t rio_writen(int fd, void *usrbuf, size_t n);
+void rio_readinitb(rio_t *rp, int fd); 
+ssize_t	rio_readnb(rio_t *rp, void *usrbuf, size_t n);
+ssize_t	rio_readlineb(rio_t *rp, void *usrbuf, size_t maxlen);
+
+/* Wrappers for Rio package */
+ssize_t Rio_readn(int fd, void *usrbuf, size_t n);
+void Rio_writen(int fd, void *usrbuf, size_t n);
+void Rio_readinitb(rio_t *rp, int fd); 
+ssize_t Rio_readnb(rio_t *rp, void *usrbuf, size_t n);
+ssize_t Rio_readlineb(rio_t *rp, void *usrbuf, size_t maxlen);
+
