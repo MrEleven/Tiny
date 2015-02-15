@@ -12,3 +12,4 @@ trans_imp/provider/apitest.py
 \#*.py\#
 .\#*
 *.log
+*.o
