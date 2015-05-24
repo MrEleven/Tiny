@@ -54,17 +54,16 @@ void eval(char *cmdline)
      strcpy(buf, cmdline);
      bg = parse_line(buf, argv);
      // if argv[0] is NULL, the no command
-     printf("argv[0] = %s", argv[0]);
      if (argv[0] == NULL)
-	  printf("shit\n");
+     {
 	  return;
+     }
 
      // anaylse if the builtin command, if not run in another process
      if(!builtin_command(argv))
      {
 	  if ((pid = fork()) == 0)
 	  {
-	       printf("executed\n");
 	       if (execve(argv[0], argv, environ) < 0)
 	       {
 		    printf("%s: Command not found.\n", argv[0]);
@@ -87,7 +86,6 @@ void eval(char *cmdline)
 
 int builtin_command(char **argv)
 {
-     printf("fuck\n");
      if (!strcmp(argv[0], "quit"))
 	  exit(0);
      if (!strcmp(argv[0], "&"))
